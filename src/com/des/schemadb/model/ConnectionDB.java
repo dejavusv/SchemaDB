@@ -20,6 +20,8 @@ public class ConnectionDB {
     private static final String Sqlserver = "net.sourceforge.jtds.jdbc.Driver";
     private static final String Mysql_Name = "Mysql";
     private static final String Sqlserver_Name = "SqlServer";
+    private static final String Oracle = "Oracle";
+    private static final String Oracle_Name = "oracle.jdbc.driver.OracleDriver";
     
     private String type;
     private String user;
@@ -32,13 +34,18 @@ public class ConnectionDB {
     private java.sql.Connection con;
 
     public ConnectionDB(String type, String user, String pass, String IP, String DBName, String port){
+        System.out.println("type :"+type);
         if (type.equalsIgnoreCase(Mysql_Name)) {
             this.driver = Mysql;
-            this.ConnectionURL = "jdbc:mysql://" + IP + "/" + DBName + "?user=" + user + "&password=" + pass;
+            this.ConnectionURL = "jdbc:mysql://" + IP+":"+port+ "/" + DBName;//"jdbc:mysql://" + IP + "/" + DBName + "?user=" + user + "&password=" + pass;
         } else if (type.equalsIgnoreCase(Sqlserver_Name)) {
             this.driver = Sqlserver;
             this.ConnectionURL = "jdbc:jtds:sqlserver://" + IP + ":" + port + "/" + DBName + ";user=" + user + ";password=" + pass;
+        }else if(type.equalsIgnoreCase(Oracle)) {
+            this.driver = Oracle_Name;
+            this.ConnectionURL = "jdbc:oracle:thin:@" + IP + ":" + port + ":" + DBName;
         }
+        
         try {
             Class.forName(driver);
         } catch (Exception ex) {
