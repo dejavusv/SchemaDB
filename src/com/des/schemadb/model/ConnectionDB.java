@@ -37,7 +37,7 @@ public class ConnectionDB {
         System.out.println("type :"+type);
         if (type.equalsIgnoreCase(Mysql_Name)) {
             this.driver = Mysql;
-            this.ConnectionURL = "jdbc:mysql://" + IP+":"+port+ "/" + DBName;//"jdbc:mysql://" + IP + "/" + DBName + "?user=" + user + "&password=" + pass;
+            this.ConnectionURL = "jdbc:mysql://" + IP + "/" + DBName + "?user=" + user + "&password=" + pass;//"jdbc:mysql://" + IP + "/" + DBName + "?user=" + user + "&password=" + pass;
         } else if (type.equalsIgnoreCase(Sqlserver_Name)) {
             this.driver = Sqlserver;
             this.ConnectionURL = "jdbc:jtds:sqlserver://" + IP + ":" + port + "/" + DBName + ";user=" + user + ";password=" + pass;
@@ -116,7 +116,11 @@ public class ConnectionDB {
         this.con = con;
     }
     
-    public Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {  
+        if(type.equalsIgnoreCase(Oracle)) {
+            System.out.println(this.ConnectionURL+","+user+","+pass);
+            return DriverManager.getConnection(this.ConnectionURL,user,pass);
+        }
         return DriverManager.getConnection(this.ConnectionURL);
     }
     

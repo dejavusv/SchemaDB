@@ -29,6 +29,7 @@ public class SchemaDB {
     private static final String TABLE_NAME = "TABLE_NAME";
     private static final String COLUMN_NAME = "COLUMN_NAME";
     private static final String IS_NULLABLE = "IS_NULLABLE";
+    private static final String IS_NULLABLE_ORACLE = "NULLABLE";
     private static final String TYPE = "DATA_TYPE";
     private static final String DISPLAY_LENGTH = "CHARACTER_MAXIMUN_LENGTH";
 
@@ -88,10 +89,19 @@ public class SchemaDB {
         SchemaTable TableDetail = new SchemaTable();
         List<SchemaField> FieldList = new LinkedList<>();
         String Query = "";
+        int indexDisplaysize = 0;
+        String nullabled = "";
+        String CheckNull ="";
         if (DBCon.getType().equalsIgnoreCase(Mysql_Name) || DBCon.getType().equalsIgnoreCase(Sqlserver_Name)) {
             Query = SQL_GET_METADATA;
+            indexDisplaysize = 9;
+            nullabled = IS_NULLABLE;
+            CheckNull = "YES";
         } else {
             Query = ORACLE_GET_METADATA;
+            indexDisplaysize =6;
+            nullabled = IS_NULLABLE_ORACLE;
+            CheckNull = "Y";
         }
         try {
             Connection con = DBCon.getConnection(); //establish connection
@@ -102,8 +112,8 @@ public class SchemaDB {
                 SchemaField field = new SchemaField();
                 field.setColumnName(rs.getString(COLUMN_NAME));
                 field.setDefaultType(rs.getString(TYPE));
-                field.setDisplaySize(rs.getInt(9));
-                field.setIsNullable(rs.getString(IS_NULLABLE).equalsIgnoreCase("YES"));
+                field.setDisplaySize(rs.getInt(indexDisplaysize));
+                field.setIsNullable(rs.getString(nullabled).equalsIgnoreCase(CheckNull));
                 field.setType(MappingDatatype(rs.getString(TYPE)));
                 FieldList.add(field);
             }
@@ -269,6 +279,9 @@ public class SchemaDB {
 
     public String MappingDatatype(String Default_Type) {
         if (Default_Type.equalsIgnoreCase("NVARCHAR2")) {
+            return "String";
+        }
+        if (Default_Type.equalsIgnoreCase("VARCHAR2")) {
             return "String";
         }
         if (Default_Type.equalsIgnoreCase("NUMBER")) {
